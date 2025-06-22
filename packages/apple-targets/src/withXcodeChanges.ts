@@ -1249,7 +1249,7 @@ async function applyXcodeChanges(
     let globalSharedGroup = protectedGroup.props.children.find(
       (child) => child.props.path === "_shared"
     );
-    
+
     if (!globalSharedGroup) {
       globalSharedGroup = PBXFileSystemSynchronizedRootGroup.create(project, {
         path: "_shared",
@@ -1292,6 +1292,27 @@ async function applyXcodeChanges(
       });
       globalSharedGroup.props.exceptions.push(extensionExceptionSet);
     }
+
+    // Also explicitly add global shared Swift files to the Sources build phase
+    const sourcesBuildPhase = targetToUpdate.getSourcesBuildPhase();
+
+    globalSharedAssets.forEach((assetPath) => {
+      if (assetPath.endsWith('.swift')) {
+        const fullPath = path.join(targetsDir, assetPath);
+        const relativePath = path.relative(config._internal!.projectRoot, fullPath);
+
+        // Create file reference for the global shared Swift file
+        const fileRef = PBXFileReference.create(project, {
+          lastKnownFileType: "sourcecode.swift",
+          path: relativePath,
+          sourceTree: "SOURCE_ROOT",
+        });
+
+        // Add to extension target sources
+        const extensionBuildFile = PBXBuildFile.create(project, { fileRef });
+        sourcesBuildPhase.props.files.push(extensionBuildFile);
+      }
+    });
   }
 
   applyDevelopmentTeamIdToTargets();
