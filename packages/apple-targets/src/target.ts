@@ -353,8 +353,7 @@ export function isNativeTargetOfType(
 ): boolean {
   if (
     type === "watch" &&
-    (target.props.productType === "com.apple.product-type.application" ||
-      target.props.productType === "com.apple.widgetkit-extension")
+    target.props.productType === "com.apple.product-type.application"
   ) {
     return (
       "WATCHOS_DEPLOYMENT_TARGET" in
