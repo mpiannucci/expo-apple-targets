@@ -55,7 +55,8 @@ This file can have the following properties:
 module.exports = {
   type: "widget",
 
-  // Name of the target/product. Defaults to the directory name.
+  // Name of the target/product. Defaults to the directory name. On watch targets,
+  // this is only used for the product name, the display name is the same as the main app.
   name: "My Widget",
 
   // Generates colorset files for the target.
@@ -286,6 +287,7 @@ Ideally, this would be generated automatically based on a fully qualified Xcode 
 | app-intent              | App Intent Extension               |
 | widget                  | Widget / Live Activity             |
 | watch                   | Watch App (with companion iOS App) |
+| watch-widget            | Widget for Watch App               |
 | clip                    | App Clip                           |
 | safari                  | Safari Extension                   |
 | share                   | Share Extension                    |

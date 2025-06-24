@@ -465,6 +465,9 @@ function createWatchAppConfigurationList(
   const mainAppTarget = getMainAppTarget(project).getDefaultConfiguration();
   // NOTE: No base Info.plist needed.
 
+  // Use the same name for the watch app and the main app
+  const mainAppName = mainAppTarget.props.name;
+
   const common: BuildSettings = {
     ASSETCATALOG_COMPILER_APPICON_NAME: "AppIcon",
     CLANG_ANALYZER_NONNULL: "YES",
@@ -481,7 +484,7 @@ function createWatchAppConfigurationList(
     GCC_C_LANGUAGE_STANDARD: "gnu11",
     INFOPLIST_FILE: cwd + "/Info.plist",
     GENERATE_INFOPLIST_FILE: "YES",
-    INFOPLIST_KEY_CFBundleDisplayName: name,
+    INFOPLIST_KEY_CFBundleDisplayName: mainAppName,
     INFOPLIST_KEY_UISupportedInterfaceOrientations:
       "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown",
     INFOPLIST_KEY_WKCompanionAppBundleIdentifier:
@@ -1221,14 +1224,6 @@ async function applyXcodeChanges(
       productType: productType,
     });
 
-    if (props.type !== "watch-widget") {
-    const copyPhase = mainAppTarget.getCopyBuildPhaseForTarget(targetToUpdate);
-
-      if (!copyPhase.getBuildFile(appExtensionBuildFile.props.fileRef)) {
-        copyPhase.props.files.push(appExtensionBuildFile);
-      }
-    }
-
     // For watch widget extensions, also add them to the watch app target's copy phase
     if (props.type === "watch-widget") {
       const watchAppTarget = project.rootObject.props.targets.find((target) => {
@@ -1254,6 +1249,13 @@ async function applyXcodeChanges(
             runOnlyForDeploymentPostprocessing: 0,
           }
         );
+      }
+    } else {
+      // For all other targets, add the target product to the main app target's copy phase
+      const copyPhase = mainAppTarget.getCopyBuildPhaseForTarget(targetToUpdate);
+
+      if (!copyPhase.getBuildFile(appExtensionBuildFile.props.fileRef)) {
+        copyPhase.props.files.push(appExtensionBuildFile);
       }
     }
   }
