@@ -1,6 +1,6 @@
 {
-  "name": "@bacons/apple-targets",
-  "version": "3.0.6",
+  "name": "@mattnucc/apple-targets",
+  "version": "4.1.0",
   "description": "Generate Apple Targets with Expo Prebuild",
   "main": "build/ExtensionStorage.js",
   "types": "build/ExtensionStorage.d.ts",
